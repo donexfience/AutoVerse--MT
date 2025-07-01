@@ -4,7 +4,7 @@ dotnev.config();
 
 class Database {
   private static uri: string =
-    process.env.MONGO_URI || "mongodb://localhost:27017/AutoVerse";
+    process.env.MONGOURI || "mongodb://localhost:27017/AutoVerse";
 
   public static async connect(): Promise<void> {
     try {
