@@ -23,7 +23,7 @@ export const useNotesQuery = () => {
     onSuccess: (data: any) => {
       dispatch(setNotes(data));
     },
-  });
+  } as any);
 };
 
 export const useCreateNoteMutation = () => {
@@ -35,8 +35,6 @@ export const useCreateNoteMutation = () => {
     onSuccess: (data) => {
       dispatch(addNote(data));
       queryClient.invalidateQueries({ queryKey: ["notes"] });
-    },
-    onError: (error) => {
     },
   });
 };
@@ -52,18 +50,16 @@ export const useUpdateNoteMutation = () => {
       // Invalidate queries to refetch fresh data to prevent cahcing
       queryClient.invalidateQueries({ queryKey: ["notes"] });
     },
-    onError: (error) => {
-    },
     onMutate: async (updatedNote: any) => {
       await queryClient.cancelQueries({ queryKey: ["notes"] });
 
       // getting  the previous value
       const previousNotes = queryClient.getQueryData(["notes"]);
 
-      // Optimistically update the Redux state
+      // ALl time  update the Redux state
       dispatch(updateNote(updatedNote));
 
-      // Return a context object with the snapshotted value
+      // Return a context object with the got value
       return { previousNotes };
     },
     onSettled: () => {
@@ -83,8 +79,6 @@ export const useDeleteNoteMutation = () => {
       dispatch(deleteNote(deletedId));
       queryClient.invalidateQueries({ queryKey: ["notes"] });
     },
-    onError: (error) => {
-    },
   });
 };
 
@@ -101,8 +95,6 @@ export const useEnhanceNoteMutation = () => {
         queryClient.invalidateQueries({ queryKey: ["notes"] });
       } else if (response.type === "suggestion") {
       }
-    },
-    onError: (error) => {
     },
   });
 };

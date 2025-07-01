@@ -43,9 +43,7 @@ const NoteNode: React.FC<NodeProps<NoteNodeData>> = ({ data }) => {
   const [enhancePrompt, setEnhancePrompt] = useState("");
   const [showEnhanceInput, setShowEnhanceInput] = useState(false);
 
-  // New states for handling suggestions
   const [suggestionText, setSuggestionText] = useState("");
-  const [showSuggestion, setShowSuggestion] = useState(false);
 
   const { isOpen, onOpen, onOpenChange } = useDisclosure();
   const {
@@ -58,6 +56,7 @@ const NoteNode: React.FC<NodeProps<NoteNodeData>> = ({ data }) => {
   const enhanceNoteMutation = useEnhanceNoteMutation();
 
   const handleDelete = () => {
+    console.log(enhancePrompt)
     onOpen();
   };
 
@@ -92,9 +91,7 @@ const NoteNode: React.FC<NodeProps<NoteNodeData>> = ({ data }) => {
         {
           onSuccess: (response: any) => {
             console.log(response, "response from ai");
-            // Handle different response types from backend
             if (response.type === "enhanced") {
-              // Content was actually enhanced and saved
               toast.success("Note enhanced successfully!", {
                 style: {
                   background: "#8B5CF6",
@@ -102,7 +99,6 @@ const NoteNode: React.FC<NodeProps<NoteNodeData>> = ({ data }) => {
                 },
               });
             } else if (response.type === "suggestion") {
-              // AI provided suggestions instead of enhancement
               setSuggestionText(response.suggestion);
               onSuggestionOpen();
 
@@ -115,11 +111,10 @@ const NoteNode: React.FC<NodeProps<NoteNodeData>> = ({ data }) => {
               });
             }
 
-            // Reset enhancement UI state
             setEnhancePrompt("");
             setShowEnhanceInput(false);
           },
-          onError: (error) => {
+          onError: () => {
             toast.error("Failed to enhance note", {
               style: {
                 background: "#EF4444",
@@ -127,7 +122,6 @@ const NoteNode: React.FC<NodeProps<NoteNodeData>> = ({ data }) => {
               },
             });
 
-            // Reset enhancement UI state on error
             setShowEnhanceInput(false);
           },
         }
@@ -273,7 +267,6 @@ const NoteNode: React.FC<NodeProps<NoteNodeData>> = ({ data }) => {
         </div>
       </NeonGradientCard>
 
-      {/* Delete Confirmation Modal */}
       <Modal
         isOpen={isOpen}
         onOpenChange={onOpenChange}

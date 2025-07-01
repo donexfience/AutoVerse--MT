@@ -17,7 +17,7 @@ import NoteNode from "@/components/notes/NoteNode";
 import type { RootState } from "redux/store";
 import type { Note } from "types/types";
 import { useNotesQuery } from "../../hooks/useNotesQuery";
-import { updateNote } from "../../redux/slice/noteSlice"; 
+import { updateNote } from "../../redux/slice/noteSlice";
 import EditNoteModal from "@/components/modal/EditNoteModal";
 import CreateNoteModal from "@/components/modal/CreateNoteModal";
 import { debounce } from "lodash";
@@ -83,7 +83,6 @@ const NotesCanvas: React.FC = () => {
         if (change.type === "position" && change.position) {
           const note = notes.find((n) => n._id === change.id);
           if (note) {
-
             debouncedUpdate(change.id, change.position);
           }
         }
@@ -97,7 +96,6 @@ const NotesCanvas: React.FC = () => {
       socket.on(
         "notePositionUpdated",
         ({ noteId, position }: { noteId: string; position: any }) => {
-
           setNodes((nds) =>
             nds.map((node) => {
               if (node.id === noteId) {
@@ -120,6 +118,7 @@ const NotesCanvas: React.FC = () => {
       );
 
       socket.on("error", (message: string) => {
+        console.error(message, "socket error");
       });
     }
 
