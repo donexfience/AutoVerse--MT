@@ -8,7 +8,7 @@ import morgan from "morgan";
 import path from "path";
 import { NoteController } from "./controllers/noteController";
 import { NoteRoutes } from "./routes/notes";
-import Database from "@/config/database";
+import Database from "./config/database";
 import { NoteSocketHandler } from "./sockets/noteSocketHandler";
 
 dotenv.config();
