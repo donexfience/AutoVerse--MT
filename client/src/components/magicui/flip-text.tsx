@@ -1,10 +1,12 @@
 "use client";
 
-import { AnimatePresence, motion, Variants, MotionProps } from "motion/react";
+import { AnimatePresence, motion } from "motion/react";
+import type { MotionProps, Variants } from "motion/react";
+
 
 import { cn } from "@/lib/utils";
-import { ElementType } from "react";
 import React from "react";
+import type { ElementType } from "react";
 
 interface FlipTextProps extends MotionProps {
   /** The duration of the animation */

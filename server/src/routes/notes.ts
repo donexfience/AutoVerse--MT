@@ -13,7 +13,7 @@ export class NoteRoutes {
   }
 
   private initializeRoutes(): void {
-    this.router.get("/", (req, res) => {
+    this.router.get("/details", (req, res) => {
       res.json({
         message: "NOTE API is running!",
         version: "1.0.5",
