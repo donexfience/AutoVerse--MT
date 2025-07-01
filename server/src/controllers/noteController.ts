@@ -3,7 +3,6 @@ import Note from "@/models/notes";
 import axios from "axios";
 import { HttpCode } from "../utils/constants";
 
-// Extend Request interface to include userId
 interface AuthenticatedRequest extends Request {
   userId?: string;
 }
