@@ -1,5 +1,5 @@
 import { Server as SocketIOServer, Socket } from "socket.io";
-import Note from "@/models/notes";
+import Note from "../models/notes";
 
 interface NotePositionData {
   noteId: string;
