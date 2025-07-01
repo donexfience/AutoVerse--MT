@@ -1,5 +1,6 @@
 import { Router } from "express";
 import { NoteController } from "@/controllers/noteController";
+import { userMiddleware } from "@/middlewares/user";
 
 export class NoteRoutes {
   private router: Router;
@@ -28,6 +29,7 @@ export class NoteRoutes {
         },
       });
     });
+    this.router.use(userMiddleware);
     this.router.post("/:id/enhance", this.noteController.enhanceNote);
     this.router.get("/", this.noteController.getNotes);
     this.router.get("/:id", this.noteController.getNoteById);
