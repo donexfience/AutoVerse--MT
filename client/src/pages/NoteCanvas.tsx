@@ -46,7 +46,7 @@ const NotesCanvas: React.FC = () => {
 
   useEffect(() => {
     const newSocket = io(
-      import.meta.env.REACT_APP_BACKEND_URL || "http://localhost:3000"
+      import.meta.env.VITE_BACKEND_URL_SOCKET || "http://localhost:3000"
     );
     setSocket(newSocket);
 
