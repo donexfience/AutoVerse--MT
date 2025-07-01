@@ -13,3 +13,8 @@ export const getNotes = async () => {
     throw err as AxiosError<APIErrorResponse>;
   }
 };
+
+export const updateNotePosition = async (note) => {
+  const response = await axiosInstance.put(`/api/notes/${note._id}`, note);
+  return response.data.data;
+};
