@@ -20,7 +20,7 @@ export const useNotesQuery = () => {
   return useQuery({
     queryKey: ["notes"],
     queryFn: getNotes,
-    onSuccess: (data:any) => {
+    onSuccess: (data: any) => {
       dispatch(setNotes(data));
     },
   });
@@ -36,6 +36,9 @@ export const useCreateNoteMutation = () => {
       dispatch(addNote(data));
       queryClient.invalidateQueries({ queryKey: ["notes"] });
     },
+    onError: (error) => {
+      console.error("Failed to create note:", error);
+    },
   });
 };
 
@@ -46,7 +49,28 @@ export const useUpdateNoteMutation = () => {
   return useMutation({
     mutationFn: updateNoteById,
     onSuccess: (data) => {
+      console.log("Note updated successfully:", data);
       dispatch(updateNote(data));
+      // Invalidate queries to refetch fresh data to prevent cahcing
+      queryClient.invalidateQueries({ queryKey: ["notes"] });
+    },
+    onError: (error) => {
+      console.error("Failed to update note:", error);
+    },
+    onMutate: async (updatedNote: any) => {
+      await queryClient.cancelQueries({ queryKey: ["notes"] });
+
+      // getting  the previous value
+      const previousNotes = queryClient.getQueryData(["notes"]);
+
+      // Optimistically update the Redux state
+      dispatch(updateNote(updatedNote));
+
+      // Return a context object with the snapshotted value
+      return { previousNotes };
+    },
+    onSettled: () => {
+      // Always refetch after error or success
       queryClient.invalidateQueries({ queryKey: ["notes"] });
     },
   });
@@ -62,6 +86,9 @@ export const useDeleteNoteMutation = () => {
       dispatch(deleteNote(deletedId));
       queryClient.invalidateQueries({ queryKey: ["notes"] });
     },
+    onError: (error) => {
+      console.error("Failed to delete note:", error);
+    },
   });
 };
 
@@ -70,11 +97,14 @@ export const useEnhanceNoteMutation = () => {
   const dispatch = useDispatch();
 
   return useMutation({
-    mutationFn: ({ id, prompt }: { id: string; prompt: string }) =>
-      enhanceNote(id, prompt),
+    mutationFn: ({ id, promptType }: { id: string; promptType: string }) =>
+      enhanceNote(id, promptType),
     onSuccess: (data) => {
       dispatch(updateNote(data));
       queryClient.invalidateQueries({ queryKey: ["notes"] });
+    },
+    onError: (error) => {
+      console.error("Failed to enhance note:", error);
     },
   });
 };

@@ -35,6 +35,8 @@ export class NoteController {
     }
   };
 
+  
+
   // Get a note by ID (with user validation)
   public getNoteById = async (
     req: AuthenticatedRequest,

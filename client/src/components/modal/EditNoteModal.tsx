@@ -179,16 +179,16 @@ const EditNoteModal: React.FC<EditNoteModalProps> = ({
             </button>
             <button
               type="submit"
-              disabled={updateNoteMutation.isLoading}
+              disabled={updateNoteMutation.isPending}
               className="flex-1 px-6 py-3 bg-gradient-to-r from-purple-600 via-pink-600 to-rose-600 text-white rounded-xl font-medium hover:from-purple-700 hover:to-rose-700 transition-all duration-200 shadow-md hover:shadow-lg"
             >
-              {updateNoteMutation.isLoading ? "Updating..." : "Update Note"}
+              {updateNoteMutation.isPending ? "Updating..." : "Update Note"}
             </button>
           </div>
         </form>
       </div>
 
-      <style jsx>{`
+      <style>{`
         .animate-fade-in {
           animation: fadeIn 0.3s ease-out forwards;
         }

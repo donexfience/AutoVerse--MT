@@ -4,9 +4,10 @@ import { BoxReveal } from "@/components/magicui/box-reveal";
 import { ShimmerButton } from "@/components/magicui/shimmer-button";
 import { MarqueeDemo } from "../../utils/MarqueDemo";
 import { useEffect } from "react";
-import React from "react";
+import { useNavigate } from "react-router-dom";
 
 const Home = () => {
+  const navigate = useNavigate();
   useEffect(() => {
     // Load Google Fonts
     const link = document.createElement("link");
@@ -123,7 +124,9 @@ const Home = () => {
             </BoxReveal>
 
             <div className="flex flex-col sm:flex-row items-center justify-center gap-4 mt-8">
-              <ShimmerButton>GO TO CANVAS</ShimmerButton>
+              <ShimmerButton onClick={() => navigate("/canvas")}>
+                GO TO CANVAS
+              </ShimmerButton>
               <button
                 className="text-purple-400 hover:text-purple-300 px-8 py-4 font-semibold text-lg transition-colors"
                 style={{ fontFamily: "Inter, sans-serif" }}
@@ -145,7 +148,7 @@ const Home = () => {
             </div>
 
             {/* Mobile Interface */}
-            <div className="absolute -top-4 -right-4 w-72 z-10">
+            <div className="absolute -top-32 -right-12 w-72 z-10">
               <img
                 src="/assets/mobile4.jpg"
                 alt="AInoteTaker Mobile Interface"

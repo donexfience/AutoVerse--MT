@@ -1,11 +1,6 @@
 import type { AxiosError } from "axios";
 import axiosInstance from "../axiosInstance";
-import {
-  APIErrorResponse,
-  CreateNoteRequest,
-  Note,
-  UpdateNoteRequest,
-} from "../../types/types";
+import { type APIErrorResponse, type CreateNoteRequest, type Note, type UpdateNoteRequest } from "../../types/types";
 
 export const getNotes = async (): Promise<Note[]> => {
   try {

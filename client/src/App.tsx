@@ -23,10 +23,10 @@ function App() {
       <ToastContainer />
       <Router>
         <Routes>
+            <Route path="/" element={<Home />} />
+            <Route path="/canvas" element={<NotesCanvas />} />
+            <Route path="*" element={<NotFoundPage />} />
           {/* Home route */}
-          <Route path="/" element={<Home />} />
-          <Route path="/canvas" element={<NotesCanvas />} />
-          <Route path="*" element={<NotFoundPage />} />
         </Routes>
       </Router>
     </div>
