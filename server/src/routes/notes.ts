@@ -14,15 +14,16 @@ export class NoteRoutes {
   private initializeRoutes(): void {
     this.router.get("/", (req, res) => {
       res.json({
-        message: "API is running!",
-        version: "1.0.0",
+        message: "NOTE API is running!",
+        version: "1.0.5",
         endpoints: {
-          auth: {
+          notes: {
             "GET /api/notes": " get notes from server",
             "POST /api/notes": "create a notes to server",
             "PUT /api/notes/:id": " update a note from server",
             "DELETE /api/notes/:id": "delte a notes from server",
             "POST /api/notes/:id/enhance": "enhance a note from server",
+            "GET /api/notes/:id": "get a note by id from server",
           },
         },
       });

@@ -3,11 +3,29 @@ import Note from "@/models/notes";
 import axios from "axios";
 import { HttpCode } from "../utils/constants";
 
+// Extend Request interface to include userId
+interface AuthenticatedRequest extends Request {
+  userId?: string;
+}
+
 export class NoteController {
-  // Get all notes
-  public getNotes = async (req: Request, res: Response): Promise<void> => {
+  // Get all notes for a user
+  public getNotes = async (
+    req: AuthenticatedRequest,
+    res: Response
+  ): Promise<void> => {
     try {
-      const notes = await Note.find();
+      const userId = req.userId || (req.headers["x-user-id"] as string);
+
+      if (!userId) {
+        res.status(HttpCode.BAD_REQUEST).json({
+          success: false,
+          message: "User ID is required",
+        });
+        return;
+      }
+
+      const notes = await Note.find({ userId });
       res.status(HttpCode.OK).json({
         success: true,
         data: notes,
@@ -18,18 +36,24 @@ export class NoteController {
     }
   };
 
-  // Get a note by ID
-  public getNoteById = async (req: Request, res: Response): Promise<void> => {
+  // Get a note by ID (with user validation)
+  public getNoteById = async (
+    req: AuthenticatedRequest,
+    res: Response
+  ): Promise<void> => {
     try {
       const { id } = req.params;
-      if (!id) {
+      const userId = req.userId || (req.headers["x-user-id"] as string);
+
+      if (!id || !userId) {
         res.status(HttpCode.BAD_REQUEST).json({
           success: false,
-          message: "Note ID is required",
+          message: "Note ID and User ID are required",
         });
         return;
       }
-      const note = await Note.findById(id);
+
+      const note = await Note.findOne({ _id: id, userId });
       if (!note) {
         res.status(HttpCode.NOT_FOUND).json({
           success: false,
@@ -37,6 +61,7 @@ export class NoteController {
         });
         return;
       }
+
       res.status(HttpCode.OK).json({
         success: true,
         data: note,
@@ -48,13 +73,18 @@ export class NoteController {
   };
 
   // Create a new note
-  public createNote = async (req: Request, res: Response): Promise<void> => {
+  public createNote = async (
+    req: AuthenticatedRequest,
+    res: Response
+  ): Promise<void> => {
     try {
       const { title, content, position } = req.body;
-      if (!title || !content) {
+      const userId = req.userId || (req.headers["x-user-id"] as string);
+
+      if (!title || !content || !userId) {
         res.status(HttpCode.BAD_REQUEST).json({
           success: false,
-          message: "Title and content are required",
+          message: "Title, content, and user ID are required",
         });
         return;
       }
@@ -63,6 +93,7 @@ export class NoteController {
         title,
         content,
         position: position || { x: 0, y: 0 },
+        userId,
       });
 
       const savedNote = await newNote.save();
@@ -77,20 +108,24 @@ export class NoteController {
   };
 
   // Update a note
-  public updateNote = async (req: Request, res: Response): Promise<void> => {
+  public updateNote = async (
+    req: AuthenticatedRequest,
+    res: Response
+  ): Promise<void> => {
     try {
       const { id } = req.params;
       const { title, content, position } = req.body;
+      const userId = req.userId || (req.headers["x-user-id"] as string);
 
-      if (!id) {
+      if (!id || !userId) {
         res.status(HttpCode.BAD_REQUEST).json({
           success: false,
-          message: "Note ID is required",
+          message: "Note ID and User ID are required",
         });
         return;
       }
 
-      const note = await Note.findById(id);
+      const note = await Note.findOne({ _id: id, userId });
       if (!note) {
         res.status(HttpCode.NOT_FOUND).json({
           success: false,
@@ -117,19 +152,23 @@ export class NoteController {
   };
 
   // Delete a note
-  public deleteNote = async (req: Request, res: Response): Promise<void> => {
+  public deleteNote = async (
+    req: AuthenticatedRequest,
+    res: Response
+  ): Promise<void> => {
     try {
       const { id } = req.params;
+      const userId = req.userId || (req.headers["x-user-id"] as string);
 
-      if (!id) {
+      if (!id || !userId) {
         res.status(HttpCode.BAD_REQUEST).json({
           success: false,
-          message: "Note ID is required",
+          message: "Note ID and User ID are required",
         });
         return;
       }
 
-      const note = await Note.findById(id);
+      const note = await Note.findOne({ _id: id, userId });
       if (!note) {
         res.status(HttpCode.NOT_FOUND).json({
           success: false,
@@ -150,20 +189,24 @@ export class NoteController {
   };
 
   // Enhance note using AI
-  public enhanceNote = async (req: Request, res: Response): Promise<void> => {
+  public enhanceNote = async (
+    req: AuthenticatedRequest,
+    res: Response
+  ): Promise<void> => {
     try {
       const { id } = req.params;
       const { promptType } = req.body;
+      const userId = req.userId || (req.headers["x-user-id"] as string);
 
-      if (!id || !promptType) {
+      if (!id || !promptType || !userId) {
         res.status(HttpCode.BAD_REQUEST).json({
           success: false,
-          message: "Note ID and prompt type are required",
+          message: "Note ID, prompt type, and user ID are required",
         });
         return;
       }
 
-      const note = await Note.findById(id);
+      const note = await Note.findOne({ _id: id, userId });
       if (!note) {
         res.status(HttpCode.NOT_FOUND).json({
           success: false,
