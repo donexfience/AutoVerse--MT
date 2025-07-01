@@ -63,7 +63,6 @@ const EditNoteModal: React.FC<EditNoteModalProps> = ({
       });
       onClose();
     } catch (error) {
-      console.error("Failed to update note:", error);
     }
   };
 

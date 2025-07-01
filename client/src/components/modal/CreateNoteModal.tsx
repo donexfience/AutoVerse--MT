@@ -70,7 +70,6 @@ const CreateNoteModal: React.FC<CreateNoteModalProps> = ({
       setErrors({});
       onClose();
     } catch (error) {
-      console.error("Failed to create note:", error);
     }
   };
 

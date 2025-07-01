@@ -7,7 +7,7 @@ const axiosInstance = axios.create({
     "x-user-id": getUserId(),
   },
   withCredentials: true,
-  timeout: 10000,
+ timeout: 60000
 });
 
 export default axiosInstance;

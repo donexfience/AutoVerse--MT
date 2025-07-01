@@ -37,7 +37,6 @@ export const useCreateNoteMutation = () => {
       queryClient.invalidateQueries({ queryKey: ["notes"] });
     },
     onError: (error) => {
-      console.error("Failed to create note:", error);
     },
   });
 };
@@ -49,13 +48,11 @@ export const useUpdateNoteMutation = () => {
   return useMutation({
     mutationFn: updateNoteById,
     onSuccess: (data) => {
-      console.log("Note updated successfully:", data);
       dispatch(updateNote(data));
       // Invalidate queries to refetch fresh data to prevent cahcing
       queryClient.invalidateQueries({ queryKey: ["notes"] });
     },
     onError: (error) => {
-      console.error("Failed to update note:", error);
     },
     onMutate: async (updatedNote: any) => {
       await queryClient.cancelQueries({ queryKey: ["notes"] });
@@ -87,7 +84,6 @@ export const useDeleteNoteMutation = () => {
       queryClient.invalidateQueries({ queryKey: ["notes"] });
     },
     onError: (error) => {
-      console.error("Failed to delete note:", error);
     },
   });
 };
@@ -99,12 +95,14 @@ export const useEnhanceNoteMutation = () => {
   return useMutation({
     mutationFn: ({ id, promptType }: { id: string; promptType: string }) =>
       enhanceNote(id, promptType),
-    onSuccess: (data) => {
-      dispatch(updateNote(data));
-      queryClient.invalidateQueries({ queryKey: ["notes"] });
+    onSuccess: (response: any) => {
+      if (response.type === "enhanced") {
+        dispatch(updateNote(response.data));
+        queryClient.invalidateQueries({ queryKey: ["notes"] });
+      } else if (response.type === "suggestion") {
+      }
     },
     onError: (error) => {
-      console.error("Failed to enhance note:", error);
     },
   });
 };

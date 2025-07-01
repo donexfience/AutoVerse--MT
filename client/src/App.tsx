@@ -4,7 +4,7 @@ import { useEffect } from "react";
 import { initializeUserId } from "../redux/slice/userSlice";
 import type { RootState } from "../redux/store";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
-import { ToastContainer } from "react-fox-toast";
+import { Toaster } from "react-hot-toast";
 import Home from "./pages/Home";
 import NotFoundPage from "./pages/404/NotFound";
 import NotesCanvas from "./pages/NoteCanvas";
@@ -20,12 +20,12 @@ function App() {
   }, [userId, dispatch]);
   return (
     <div>
-      <ToastContainer />
+      <Toaster position="top-center" />
       <Router>
         <Routes>
-            <Route path="/" element={<Home />} />
-            <Route path="/canvas" element={<NotesCanvas />} />
-            <Route path="*" element={<NotFoundPage />} />
+          <Route path="/" element={<Home />} />
+          <Route path="/canvas" element={<NotesCanvas />} />
+          <Route path="*" element={<NotFoundPage />} />
           {/* Home route */}
         </Routes>
       </Router>

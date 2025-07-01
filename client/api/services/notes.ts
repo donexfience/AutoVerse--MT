@@ -1,6 +1,11 @@
 import type { AxiosError } from "axios";
 import axiosInstance from "../axiosInstance";
-import { type APIErrorResponse, type CreateNoteRequest, type Note, type UpdateNoteRequest } from "../../types/types";
+import {
+  type APIErrorResponse,
+  type CreateNoteRequest,
+  type Note,
+  type UpdateNoteRequest,
+} from "../../types/types";
 
 export const getNotes = async (): Promise<Note[]> => {
   try {
@@ -29,7 +34,9 @@ export const createNote = async (note: CreateNoteRequest): Promise<Note> => {
   }
 };
 
-export const updateNoteById = async (note: UpdateNoteRequest): Promise<Note> => {
+export const updateNoteById = async (
+  note: UpdateNoteRequest
+): Promise<Note> => {
   try {
     const response = await axiosInstance.put(`/notes/${note._id}`, note);
     return response.data.data;
@@ -64,10 +71,10 @@ export const enhanceNote = async (
   promptType: string
 ): Promise<Note> => {
   try {
-    const response = await axiosInstance.post(`/notes/${id}/enhance`, {
+    const response: any = await axiosInstance.post(`/notes/${id}/enhance`, {
       promptType,
     });
-    return response.data.data;
+    return response.data;
   } catch (err) {
     throw err as AxiosError<APIErrorResponse>;
   }

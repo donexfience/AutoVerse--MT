@@ -16,7 +16,6 @@ export class NoteSocketHandler {
   }
 
   private handleConnection = (socket: Socket): void => {
-    console.log("User connected:", socket.id);
 
     socket.on("updateNotePosition", async (data: NotePositionData) => {
       const { noteId, position, userId } = data;
@@ -30,15 +29,12 @@ export class NoteSocketHandler {
           noteId,
           position: updatedNote.position,
         });
-        console.log("Note position updated and broadcasted:", noteId, position);
       } catch (error) {
-        console.error("Error updating note position:", error);
         socket.emit("error", "Failed to update note position");
       }
     });
 
     socket.on("disconnect", () => {
-      console.log("User disconnected:", socket.id);
     });
   };
 
@@ -47,7 +43,6 @@ export class NoteSocketHandler {
     userId: string,
     position: { x: number; y: number }
   ) {
-    console.log(noteId, userId);
     const note = await Note.findOne({ _id: noteId, userId });
     if (!note) throw new Error("Note not found");
 

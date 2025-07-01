@@ -14,7 +14,6 @@ import {
   ModalFooter,
   Button,
   useDisclosure,
-  Chip,
 } from "@heroui/react";
 import {
   Sparkles,
@@ -25,10 +24,15 @@ import {
   Calendar,
   Info,
   AlertCircle,
+  Lightbulb,
 } from "lucide-react";
 import { toast } from "react-hot-toast";
 import { NeonGradientCard } from "../../../utils/NeonCard";
-import { availablePromptTypes } from "../../../utils/availablePrompt";
+import {
+  availablePromptTypes,
+  formatDate,
+  truncateContent,
+} from "../../../utils/availablePrompt";
 
 interface NoteNodeData extends Note {
   onEdit: (note: Note) => void;
@@ -38,7 +42,17 @@ const NoteNode: React.FC<NodeProps<NoteNodeData>> = ({ data }) => {
   const [isExpanded, setIsExpanded] = useState(false);
   const [enhancePrompt, setEnhancePrompt] = useState("");
   const [showEnhanceInput, setShowEnhanceInput] = useState(false);
+
+  // New states for handling suggestions
+  const [suggestionText, setSuggestionText] = useState("");
+  const [showSuggestion, setShowSuggestion] = useState(false);
+
   const { isOpen, onOpen, onOpenChange } = useDisclosure();
+  const {
+    isOpen: isSuggestionOpen,
+    onOpen: onSuggestionOpen,
+    onOpenChange: onSuggestionOpenChange,
+  } = useDisclosure();
 
   const deleteNoteMutation = useDeleteNoteMutation();
   const enhanceNoteMutation = useEnhanceNoteMutation();
@@ -76,57 +90,48 @@ const NoteNode: React.FC<NodeProps<NoteNodeData>> = ({ data }) => {
           promptType: promptType,
         },
         {
-          onSuccess: () => {
-            toast.success("Note enhanced successfully!", {
-              style: {
-                background: "#8B5CF6",
-                color: "white",
-              },
-            });
+          onSuccess: (response: any) => {
+            console.log(response, "response from ai");
+            // Handle different response types from backend
+            if (response.type === "enhanced") {
+              // Content was actually enhanced and saved
+              toast.success("Note enhanced successfully!", {
+                style: {
+                  background: "#8B5CF6",
+                  color: "white",
+                },
+              });
+            } else if (response.type === "suggestion") {
+              // AI provided suggestions instead of enhancement
+              setSuggestionText(response.suggestion);
+              onSuggestionOpen();
+
+              toast.success("AI provided suggestions for improvement", {
+                style: {
+                  background: "#3B82F6",
+                  color: "white",
+                },
+                duration: 4000,
+              });
+            }
+
+            // Reset enhancement UI state
             setEnhancePrompt("");
             setShowEnhanceInput(false);
           },
-          onError: () => {
+          onError: (error) => {
             toast.error("Failed to enhance note", {
               style: {
                 background: "#EF4444",
                 color: "white",
               },
             });
+
+            // Reset enhancement UI state on error
+            setShowEnhanceInput(false);
           },
         }
       );
-    }
-  };
-
-  const truncateContent = (content: string, maxLength: number = 100) => {
-    if (content.length <= maxLength) return content;
-    return content.substring(0, maxLength) + "...";
-  };
-
-  const formatDate = (dateString: string) => {
-    const date = new Date(dateString);
-    const now = new Date();
-    const diffInHours =
-      Math.abs(now.getTime() - date.getTime()) / (1000 * 60 * 60);
-
-    if (diffInHours < 24) {
-      return date.toLocaleTimeString([], {
-        hour: "2-digit",
-        minute: "2-digit",
-      });
-    } else if (diffInHours < 168) {
-      return date.toLocaleDateString([], {
-        weekday: "short",
-        month: "short",
-        day: "numeric",
-      });
-    } else {
-      return date.toLocaleDateString([], {
-        month: "short",
-        day: "numeric",
-        year: "2-digit",
-      });
     }
   };
 
@@ -183,11 +188,18 @@ const NoteNode: React.FC<NodeProps<NoteNodeData>> = ({ data }) => {
             {!showEnhanceInput ? (
               <button
                 onClick={() => setShowEnhanceInput(true)}
-                className="w-full bg-gradient-to-r from-purple-600 to-pink-600 text-white py-2.5 px-4 rounded-lg font-medium hover:from-purple-700 hover:to-pink-700 transition-all duration-200 flex items-center justify-center gap-2 group"
+                className="w-full bg-gradient-to-r from-purple-600 to-pink-600 text-white py-2.5 px-4 rounded-lg font-medium hover:from-purple-700 hover:to-pink-700 transition-all duration-200 flex items-center justify-center gap-2 group disabled:opacity-50 disabled:cursor-not-allowed"
                 disabled={enhanceNoteMutation.isPending}
               >
                 <Sparkles className="w-4 h-4 group-hover:rotate-12 transition-transform" />
-                AI Enhance
+                {enhanceNoteMutation.isPending && (
+                  <div className="flex items-center justify-center gap-2 py-2">
+                    <div className="w-4 h-4 border-2 border-purple-500/30 border-t-purple-500 rounded-full animate-spin" />
+                    <span className="text-sm text-purple-400">
+                      Enhancing note (may take up to 30 seconds)...
+                    </span>
+                  </div>
+                )}
               </button>
             ) : (
               <div className="space-y-3">
@@ -231,9 +243,11 @@ const NoteNode: React.FC<NodeProps<NoteNodeData>> = ({ data }) => {
                     setEnhancePrompt("");
                   }}
                   className="w-full bg-gray-600 text-white py-2 px-3 rounded-lg text-sm font-medium hover:bg-gray-700 transition-all duration-200"
+                  disabled={enhanceNoteMutation.isPending}
                 >
                   Cancel
                 </button>
+
                 {enhanceNoteMutation.isPending && (
                   <div className="flex items-center justify-center gap-2 py-2">
                     <div className="w-4 h-4 border-2 border-purple-500/30 border-t-purple-500 rounded-full animate-spin" />
@@ -259,16 +273,19 @@ const NoteNode: React.FC<NodeProps<NoteNodeData>> = ({ data }) => {
         </div>
       </NeonGradientCard>
 
+      {/* Delete Confirmation Modal */}
       <Modal
         isOpen={isOpen}
         onOpenChange={onOpenChange}
         backdrop="blur"
+        size="sm"
+        placement="center"
         classNames={{
           backdrop: "bg-black/50 backdrop-opacity-40",
-          base: "border-gray-700 bg-gray-900",
-          header: "border-b border-gray-700",
-          body: "py-6",
-          footer: "border-t border-gray-700",
+          base: "bg-gray-900 border border-gray-700 max-w-lg w-full rounded-xl shadow-lg",
+          header: "border-b border-gray-700 px-4 py-3",
+          body: "px-4 py-3",
+          footer: "border-t border-gray-700 px-4 py-3",
         }}
       >
         <ModalContent>
@@ -277,28 +294,28 @@ const NoteNode: React.FC<NodeProps<NoteNodeData>> = ({ data }) => {
               <ModalHeader className="flex flex-col gap-1">
                 <div className="flex items-center gap-3">
                   <div className="p-2 bg-red-500/20 rounded-lg">
-                    <Trash2 className="w-5 h-5 text-red-400" />
+                    <Trash2 className="w-4 h-4 text-red-400" />
                   </div>
                   <div>
-                    <h3 className="text-lg font-semibold text-white">
+                    <h3 className="text-base font-semibold text-white">
                       Delete Note
                     </h3>
-                    <p className="text-sm text-gray-400">
+                    <p className="text-xs text-gray-400">
                       This action cannot be undone
                     </p>
                   </div>
                 </div>
               </ModalHeader>
               <ModalBody>
-                <div className="bg-gray-800/50 rounded-lg p-4 border border-gray-700/50">
-                  <p className="text-gray-300 mb-2">
+                <div className="bg-gray-800/50 rounded-lg p-3 border border-gray-700/50">
+                  <p className="text-gray-300 text-sm mb-1">
                     Are you sure you want to delete{" "}
                     <span className="font-semibold text-white">
                       "{data.title}"
                     </span>
                     ?
                   </p>
-                  <p className="text-sm text-gray-400">
+                  <p className="text-xs text-gray-400">
                     This will permanently remove the note and all its content.
                   </p>
                 </div>
@@ -309,6 +326,7 @@ const NoteNode: React.FC<NodeProps<NoteNodeData>> = ({ data }) => {
                   variant="ghost"
                   onPress={onClose}
                   className="text-gray-300 hover:text-white"
+                  size="sm"
                 >
                   Cancel
                 </Button>
@@ -321,8 +339,105 @@ const NoteNode: React.FC<NodeProps<NoteNodeData>> = ({ data }) => {
                   }}
                   isLoading={deleteNoteMutation.isPending}
                   className="bg-gradient-to-r from-red-600 to-red-700 text-white font-medium"
+                  size="sm"
                 >
                   {deleteNoteMutation.isPending ? "Deleting..." : "Delete Note"}
+                </Button>
+              </ModalFooter>
+            </>
+          )}
+        </ModalContent>
+      </Modal>
+
+      {/* AI Suggestions Modal */}
+      <Modal
+        isOpen={isSuggestionOpen}
+        onOpenChange={onSuggestionOpenChange}
+        backdrop="blur"
+        size="lg"
+        placement="center"
+        scrollBehavior="inside"
+        classNames={{
+          backdrop: "bg-black/50 backdrop-opacity-40",
+          base: "bg-gray-900 border border-gray-700 max-w-2xl w-full rounded-xl shadow-lg max-h-[80vh]",
+          header: "border-b border-gray-700 px-6 py-4",
+          body: "px-6 py-4",
+          footer: "border-t border-gray-700 px-6 py-4",
+        }}
+      >
+        <ModalContent>
+          {(onClose) => (
+            <>
+              <ModalHeader className="flex flex-col gap-1">
+                <div className="flex items-center gap-3">
+                  <div className="p-2 bg-blue-500/20 rounded-lg">
+                    <Lightbulb className="w-5 h-5 text-blue-400" />
+                  </div>
+                  <div>
+                    <h3 className="text-lg font-semibold text-white">
+                      AI Suggestions
+                    </h3>
+                    <p className="text-sm text-gray-400">
+                      Recommendations for improving your content
+                    </p>
+                  </div>
+                </div>
+              </ModalHeader>
+              <ModalBody>
+                <div className="space-y-4">
+                  <div className="bg-blue-500/10 border border-blue-500/30 rounded-lg p-4">
+                    <div className="flex items-start gap-3">
+                      <AlertCircle className="w-5 h-5 text-blue-400 mt-0.5 flex-shrink-0" />
+                      <div>
+                        <p className="text-sm text-blue-300 font-medium mb-2">
+                          Content Enhancement Not Possible
+                        </p>
+                        <p className="text-xs text-blue-200/80">
+                          The AI couldn't directly enhance your content but
+                          provided these suggestions to help you improve it:
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="bg-gray-800/50 rounded-lg p-4 border border-gray-700/50">
+                    <div className="max-h-64 overflow-y-auto">
+                      <pre className="text-sm whitespace-pre-wrap text-gray-300 leading-relaxed">
+                        {suggestionText}
+                      </pre>
+                    </div>
+                  </div>
+
+                  <div className="bg-yellow-500/10 border border-yellow-500/30 rounded-lg p-3">
+                    <div className="flex items-start gap-2">
+                      <Info className="w-4 h-4 text-yellow-400 mt-0.5 flex-shrink-0" />
+                      <p className="text-xs text-yellow-300">
+                        <span className="font-medium">Tip:</span> Try editing
+                        your note based on these suggestions, then attempt
+                        enhancement again for better results.
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              </ModalBody>
+              <ModalFooter>
+                <Button
+                  color="default"
+                  variant="ghost"
+                  onPress={() => data.onEdit(data)}
+                  className="text-gray-300 hover:text-white"
+                  size="sm"
+                >
+                  Edit Note
+                </Button>
+                <Button
+                  color="primary"
+                  variant="solid"
+                  onPress={onClose}
+                  className="bg-gradient-to-r from-blue-600 to-blue-700 text-white font-medium"
+                  size="sm"
+                >
+                  Got it
                 </Button>
               </ModalFooter>
             </>

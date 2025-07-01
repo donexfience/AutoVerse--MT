@@ -59,7 +59,6 @@ const NotesCanvas: React.FC = () => {
     () =>
       debounce((noteId: string, position: { x: number; y: number }) => {
         if (socket) {
-          console.log("🟡 Emitting position update:", noteId, position);
           socket.emit("updateNotePosition", { noteId, position, userId });
 
           const noteToUpdate = notes.find((n) => n._id === noteId);
@@ -78,18 +77,13 @@ const NotesCanvas: React.FC = () => {
 
   const handleNodesChange = useCallback(
     (changes: any) => {
-      console.log("calling handleNodesChange");
       setNodes((nds) => applyNodeChanges(changes, nds));
 
       changes.forEach((change: any) => {
         if (change.type === "position" && change.position) {
           const note = notes.find((n) => n._id === change.id);
           if (note) {
-            console.log(
-              "🧩 Scheduling debounce for:",
-              change.id,
-              change.position
-            );
+
             debouncedUpdate(change.id, change.position);
           }
         }
@@ -103,7 +97,6 @@ const NotesCanvas: React.FC = () => {
       socket.on(
         "notePositionUpdated",
         ({ noteId, position }: { noteId: string; position: any }) => {
-          console.log("🔄 Received position update:", noteId, position);
 
           setNodes((nds) =>
             nds.map((node) => {
@@ -127,7 +120,6 @@ const NotesCanvas: React.FC = () => {
       );
 
       socket.on("error", (message: string) => {
-        console.error("Socket error:", message);
       });
     }
 
@@ -179,7 +171,6 @@ const NotesCanvas: React.FC = () => {
           x: position.x - 150,
           y: position.y - 100,
         };
-        console.log("Canvas clicked at position:", adjustedPosition);
         setNewNotePosition(adjustedPosition);
         setIsCreateModalOpen(true);
       }
