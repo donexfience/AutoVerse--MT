@@ -1,5 +1,5 @@
 import { Request, Response } from "express";
-import Note from "@/models/notes";
+import Note from "../models/notes";
 import axios from "axios";
 import { HttpCode } from "../utils/constants";
 
