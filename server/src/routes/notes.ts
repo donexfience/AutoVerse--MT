@@ -1,6 +1,6 @@
 import { Router } from "express";
-import { NoteController } from "@/controllers/noteController";
-import { userMiddleware } from "@/middlewares/user";
+import { NoteController } from "../controllers/noteController";
+import { userMiddleware } from "../middlewares/user";
 
 export class NoteRoutes {
   private router: Router;
