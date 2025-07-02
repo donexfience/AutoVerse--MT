@@ -250,9 +250,9 @@ Push the server directory to a GitHub repository.
 Create a new web service on Render and link the repository.
 Set environment variables in the Render dashboard:
 OPENROUTER_API_KEY: Your OpenRouter API key
-FRONTEND_URL: https://your-app.vercel.app
+FRONTEND_URL: https://auto-verse-mt.vercel.app/
 MONGOURI: Production MongoDB connection string
-Deploy the app. The live URL will be something like https://your-backend.onrender.com.
+Deploy the app. The live URL will be something like https://autoverse-mt.onrender.com
 Note: Ensure environment variables reflect the deployed URLs, not local development settings.
 
 Contributing
