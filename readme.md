@@ -9,7 +9,7 @@
 
 **A modern, AI-powered note-taking application with real-time collaboration and interactive canvas**
 
-[🚀 Live Demo](#) • [📖 Documentation](#setup-instructions) • [🐛 Report Bug](#contributing) • [✨ Request Feature](#contributing)
+[🚀 Live Demo](https://auto-verse-mt.vercel.app) • [📖 Documentation](#setup-instructions) •  [🐛 Report Bug](#contributing) • [✨ Request Feature](#contributing)
 
 </div>
 
