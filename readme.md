@@ -362,7 +362,7 @@ See the [LICENSE](LICENSE) file for details.
 
 ---
 
-**Made with ❤️ by the Note AI Maker Team**
+**Made with ❤️ by Donex FIence**
 
 ⭐ **Star this repo if you found it helpful!**
 
