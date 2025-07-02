@@ -1,4 +1,6 @@
+
 Note AI Maker
+
 Note AI Maker is a web-based note-taking application that allows users to create, manage, and enhance notes with AI-powered features. It features a modern landing page and an interactive canvas for organizing notes with drag-and-drop functionality. The application leverages real-time updates for collaborative note positioning and integrates AI tools for grammar improvement and summarization.
 Table of Contents
 
@@ -100,18 +102,22 @@ OpenRouter API Key (sign up at OpenRouter to obtain a key)
 
 Frontend Setup
 
-Clone the repository and navigate to the frontend directory:git clone <repository-url>
+Clone the repository and navigate to the frontend directory:
+git clone <repository-url>
 cd client
 
 
-Install dependencies:npm install
+Install dependencies:
+npm install
 
 
-Create a .env file in the client directory with the following:VITE_BACKEND_URL=http://localhost:3000/api
+Create a .env file in the client directory with the following:
+VITE_BACKEND_URL=http://localhost:3000/api
 VITE_BACKEND_URL_SOCKET=http://localhost:3000
 
 
-Start the development server:npm run dev
+Start the development server:
+npm run dev
 
 
 Access the app at http://localhost:5173.
@@ -120,18 +126,22 @@ Access the app at http://localhost:5173.
 
 Backend Setup
 
-Navigate to the backend directory:cd server
+Navigate to the backend directory:
+cd server
 
 
-Install dependencies:npm install
+Install dependencies:
+npm install
 
 
-Create a .env file in the server directory with the following:OPENROUTER_API_KEY=your-api-key
+Create a .env file in the server directory with the following:
+OPENROUTER_API_KEY=your-api-key
 FRONTEND_URL=http://localhost:5173
 MONGOURI=your-mongodb-connection-string
 
 
-Start the backend server:npm start
+Start the backend server:
+npm start
 
 
 The API will be available at http://localhost:3000.
@@ -292,16 +302,21 @@ Note: Ensure environment variables reflect the deployed URLs, not local developm
 Contributing
 
 Fork the repository.
-Create a feature branch:git checkout -b feature/your-feature
+
+Create a feature branch:
+git checkout -b feature/your-feature
 
 
-Commit your changes:git commit -m "Add your feature description"
+Commit your changes:
+git commit -m "Add your feature description"
 
 
-Push to your fork:git push origin feature/your-feature
+Push to your fork:
+git push origin feature/your-feature
 
 
 Open a pull request.
+
 
 
 License
