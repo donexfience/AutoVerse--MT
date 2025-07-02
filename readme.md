@@ -319,7 +319,7 @@ We welcome contributions! Here's how to get started:
 
 1. **Fork the repository**
    ```bash
-   git fork https://github.com/your-username/note-ai-maker
+   git fork https://github.com/donexfience/AutoVerse--MT
    ```
 
 2. **Create a feature branch**
